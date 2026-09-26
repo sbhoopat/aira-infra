@@ -405,3 +405,165 @@ button {
   border: 1px solid var(--border-light);
   overflow: hidden;
 }
+
+/* ==========================================================================
+   Hero Video Background & Ambient Glassmorphism Styles
+   ========================================================================== */
+
+.hero-section-wrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 580px;
+  background-color: #0f172a;
+}
+
+.hero-video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #0c0a1d;
+}
+
+.hero-video-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 1s ease-in-out;
+  z-index: 1;
+}
+
+.hero-video-iframe-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw; /* 16:9 aspect ratio */
+  min-height: 100%;
+  min-width: 177.77777778vh; /* 16:9 aspect ratio */
+  transform: translate(-50%, -50%) scale(1.18);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.8s ease;
+}
+
+.hero-video-iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+/* Frosted Luxury Overlay Scrim - Ultra-Clear for Maximum Video Visibility */
+.hero-video-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.hero-video-scrim.scrim-clear {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.22) 42%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+.hero-video-scrim.scrim-dark-cinematic {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.6) 0%,
+    rgba(15, 23, 42, 0.35) 45%,
+    rgba(15, 23, 42, 0.1) 80%,
+    transparent 100%
+  );
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+.hero-video-scrim.scrim-none {
+  background: transparent;
+  backdrop-filter: blur(0px);
+}
+
+
+/* Ambient Floating Controls HUD */
+.hero-ambient-hud {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(17, 14, 46, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  transition: all var(--transition-base);
+}
+
+.hero-ambient-hud:hover {
+  background: rgba(17, 14, 46, 0.94);
+  border-color: rgba(241, 90, 36, 0.6);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+}
+
+.hud-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.hud-btn:hover {
+  background: #f15a24;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.hud-btn.active {
+  background: #f15a24;
+  color: #ffffff;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
