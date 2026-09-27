@@ -4,13 +4,13 @@ import { useProperty } from '../../context/PropertyContext';
 import { PROPERTIES_DATA } from '../../data/propertiesData';
 
 export default function EnquiryForm({ property = null, title = "Request Property Information", subtitle = "Receive complete pricing breakdown, master plans & brochure instantly." }) {
-  const { submitEnquiry } = useProperty();
+  const { submitEnquiry, properties } = useProperty();
 
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
-    propertyId: property ? property.id : 'aira-skyline',
+    propertyId: property ? property.id : (properties?.[0]?.id || 'aira-skyline'),
     configuration: '3 BHK',
     message: ''
   });
@@ -33,7 +33,8 @@ export default function EnquiryForm({ property = null, title = "Request Property
       return;
     }
 
-    const selectedProp = PROPERTIES_DATA.find(p => p.id === formData.propertyId) || property;
+    const selectedProp = (properties || []).find(p => p.id === formData.propertyId) || property;
+
 
     submitEnquiry({
       name: formData.name,

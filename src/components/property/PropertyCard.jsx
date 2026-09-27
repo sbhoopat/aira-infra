@@ -2,9 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Heart, ArrowRight, Layers, FileDown, Eye, Check } from 'lucide-react';
 import { useProperty } from '../../context/PropertyContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function PropertyCard({ property }) {
-  const { isFavorite, toggleFavorite, isInCompare, addToCompare, openModal } = useProperty();
+  const { isFavorite, toggleFavorite, isInCompare, addToCompare, openModal, deleteProperty } = useProperty();
+  const { isAdmin } = useAuth();
+
 
   const favorited = isFavorite(property.id);
   const compared = isInCompare(property.id);
@@ -236,8 +239,65 @@ export default function PropertyCard({ property }) {
           </Link>
         </div>
 
+        {/* Admin Quick Control Bar (Visible ONLY to logged in Admins) */}
+        {isAdmin && (
+          <div
+            style={{
+              marginTop: '12px',
+              paddingTop: '10px',
+              borderTop: '1px dashed #fdba74',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: '#fff7ed',
+              padding: '6px 10px',
+              borderRadius: '8px'
+            }}
+          >
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#c2410c' }}>
+              ⚙️ Admin Mode
+            </span>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <Link
+                to={`/admin`}
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#0369a1',
+                  backgroundColor: '#e0f2fe',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  textDecoration: 'none'
+                }}
+              >
+                Edit
+              </Link>
+              <button
+                onClick={() => {
+                  if (window.confirm(`Delete project "${property.name}"?`)) {
+                    deleteProperty(property.id);
+                  }
+                }}
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: '#dc2626',
+                  backgroundColor: '#fee2e2',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
     </div>
+
   );
 }

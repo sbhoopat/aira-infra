@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Send, CheckCircle2, Phone, Mail, User, Building, MessageSquare } from 'lucide-react';
 import Modal from '../common/Modal';
 import { useProperty } from '../../context/PropertyContext';
-import { PROPERTIES_DATA } from '../../data/propertiesData';
 
 export default function EnquireModal() {
-  const { modalState, closeModal, submitEnquiry } = useProperty();
+  const { properties, modalState, closeModal, submitEnquiry } = useProperty();
   const isOpen = modalState.isOpen && modalState.type === 'enquire';
-  const currentProp = modalState.property || PROPERTIES_DATA[0];
+  const currentProp = modalState.property || properties[0];
 
   const [formData, setFormData] = useState({
     name: '',
@@ -36,7 +35,7 @@ export default function EnquireModal() {
       return;
     }
 
-    const selectedProp = PROPERTIES_DATA.find(p => p.id === formData.propertyId) || currentProp;
+    const selectedProp = properties.find(p => p.id === formData.propertyId) || currentProp;
 
     submitEnquiry({
       name: formData.name,
@@ -60,7 +59,7 @@ export default function EnquireModal() {
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={submitted ? "Enquiry Submitted!" : `Enquire about ${currentProp.name}`}
+      title={submitted ? "Enquiry Submitted!" : `Enquire about ${currentProp?.name}`}
       subtitle={submitted ? "Our senior sales consultant will assist you promptly." : "Get customized payment plans, cost sheet breakdowns & priority inventory access."}
       maxWidth="560px"
     >
@@ -85,7 +84,7 @@ export default function EnquireModal() {
             Request Received Successfully
           </h4>
           <p style={{ color: '#475569', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '20px' }}>
-            Thank you, <strong>{formData.name}</strong>. An exclusive detailed pricing sheet and inventory availability list for <strong>{currentProp.name}</strong> has been shared with your registered contact details.
+            Thank you, <strong>{formData.name}</strong>. An exclusive detailed pricing sheet and inventory availability list for <strong>{currentProp?.name}</strong> has been shared with your registered contact details.
           </p>
           <button onClick={handleClose} className="btn-primary" style={{ minWidth: '140px' }}>
             Close
@@ -93,7 +92,7 @@ export default function EnquireModal() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
+
           <div>
             <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
               Project of Interest
@@ -110,9 +109,9 @@ export default function EnquireModal() {
                 fontSize: '0.9375rem'
               }}
             >
-              {PROPERTIES_DATA.map(prop => (
+              {properties.map(prop => (
                 <option key={prop.id} value={prop.id}>
-                  {prop.name} ({prop.location.area}) — {prop.priceDisplay}
+                  {prop.name} ({prop.location?.area}) — {prop.priceDisplay}
                 </option>
               ))}
             </select>

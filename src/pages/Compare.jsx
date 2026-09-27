@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useProperty } from '../context/PropertyContext';
-import { PROPERTIES_DATA } from '../data/propertiesData';
 import { Layers, X, Check, ShieldCheck, Calendar, ArrowRight, Plus } from 'lucide-react';
 
 export default function Compare() {

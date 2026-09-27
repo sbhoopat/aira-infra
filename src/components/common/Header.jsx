@@ -13,12 +13,14 @@ import {
   Building,
 } from 'lucide-react';
 import { useProperty } from '../../context/PropertyContext';
+import { useAuth } from '../../context/AuthContext';
 import AiraLogo from './AiraLogo';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { favorites, compareList, openModal } = useProperty();
+  const { user, profile, isAdmin, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -40,8 +42,9 @@ export default function Header() {
     { name: 'Properties', path: '/properties' },
     { name: 'EMI Calculator', path: '/properties#emi' },
     { name: 'Contact', path: '/contact' },
-    { name: 'Admin', path: '/admin', badge: 'Leads' }
+    { name: isAdmin ? 'Admin Dashboard' : 'Admin Login', path: isAdmin ? '/admin' : '/login', badge: isAdmin ? 'Live' : null }
   ];
+
 
   return (
     <header

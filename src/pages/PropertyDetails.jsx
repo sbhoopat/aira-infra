@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProperty } from '../context/PropertyContext';
-import { PROPERTIES_DATA } from '../data/propertiesData';
 import PropertyGallery from '../components/property/PropertyGallery';
 import FloorPlans from '../components/property/FloorPlans';
 import AmenitiesSection from '../components/property/AmenitiesSection';
@@ -29,22 +28,24 @@ import {
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { openModal, isFavorite, toggleFavorite, isInCompare, addToCompare } = useProperty();
+  const { properties, openModal, isFavorite, toggleFavorite, isInCompare, addToCompare } = useProperty();
 
   // Find property by id or slug
-  const property = PROPERTIES_DATA.find(p => p.id === id) || PROPERTIES_DATA[0];
+  const property = properties.find(p => p.id === id) || properties[0];
 
   const favorited = property ? isFavorite(property.id) : false;
   const compared = property ? isInCompare(property.id) : false;
 
   const handleOpenLightbox = (index = 0) => {
     openModal('lightbox', property, {
-      images: property.images || [property.heroImage],
+      images: property?.images || [property?.heroImage],
       activeIndex: index
     });
   };
 
-  const similarProperties = PROPERTIES_DATA.filter(p => p.id !== property.id).slice(0, 3);
+  const similarProperties = properties.filter(p => p.id !== property?.id).slice(0, 3);
+
+  if (!property) return <div style={{ padding: '40px', textAlign: 'center' }}>Property not found.</div>;
 
   return (
     <div style={{ paddingTop: '24px', paddingBottom: '80px', backgroundColor: '#fbfbfa' }}>

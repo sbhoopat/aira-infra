@@ -5,7 +5,7 @@ import { useProperty } from '../../context/PropertyContext';
 import { PROPERTIES_DATA } from '../../data/propertiesData';
 
 export default function ScheduleVisitModal() {
-  const { modalState, closeModal, submitEnquiry } = useProperty();
+  const { modalState, closeModal, submitEnquiry, properties } = useProperty();
   const isOpen = modalState.isOpen && modalState.type === 'schedule';
   const preselectedProp = modalState.property;
 
@@ -13,7 +13,7 @@ export default function ScheduleVisitModal() {
     name: '',
     phone: '',
     email: '',
-    propertyId: preselectedProp ? preselectedProp.id : 'aira-skyline',
+    propertyId: preselectedProp ? preselectedProp.id : (properties?.[0]?.id || 'aira-skyline'),
     visitDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
     visitTime: '11:00 AM',
     needCabPickup: false,
@@ -47,7 +47,8 @@ export default function ScheduleVisitModal() {
       return;
     }
 
-    const selectedProp = PROPERTIES_DATA.find(p => p.id === formData.propertyId) || preselectedProp;
+    const selectedProp = (properties || []).find(p => p.id === formData.propertyId) || preselectedProp;
+
 
     submitEnquiry({
       name: formData.name,

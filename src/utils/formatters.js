@@ -25,6 +25,8 @@ export function formatIndianCurrency(amount) {
 
 // Alias for formatIndianCurrency
 export const formatCurrencyINR = formatIndianCurrency;
+export const formatCurrency = formatIndianCurrency;
+
 
 /**
  * Format integer with Indian comma notation (e.g. 12,50,000)

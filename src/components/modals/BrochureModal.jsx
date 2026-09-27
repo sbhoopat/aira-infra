@@ -5,9 +5,10 @@ import { useProperty } from '../../context/PropertyContext';
 import { PROPERTIES_DATA } from '../../data/propertiesData';
 
 export default function BrochureModal() {
-  const { modalState, closeModal, submitEnquiry } = useProperty();
+  const { modalState, closeModal, submitEnquiry, properties } = useProperty();
   const isOpen = modalState.isOpen && modalState.type === 'brochure';
-  const currentProp = modalState.property || PROPERTIES_DATA[0];
+  const currentProp = modalState.property || properties?.[0] || PROPERTIES_DATA[0];
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -28,8 +29,8 @@ export default function BrochureModal() {
       name: formData.name,
       phone: formData.phone,
       email: formData.email,
-      propertyName: currentProp.name,
-      propertyId: currentProp.id,
+      propertyName: currentProp?.name,
+      propertyId: currentProp?.id,
       type: 'Brochure Download',
       message: `Downloaded project brochure & floor plan booklet. WhatsApp Opt-in: ${formData.receiveWhatsApp ? 'Yes' : 'No'}`
     });
@@ -43,27 +44,27 @@ export default function BrochureModal() {
         `====================================================
 AIRA INFRA - PROJECT BROCHURE & SPECIFICATIONS
 ====================================================
-Project: ${currentProp.name}
-Category: ${currentProp.category}
-Location: ${currentProp.location.fullAddress}
-Configurations: ${currentProp.configurations.join(', ')}
-Price Range: ${currentProp.priceDisplay}
-RERA Approved: ${currentProp.reraNumber}
-Total Land Parcel: ${currentProp.landArea}
-Open Space: ${currentProp.openSpacePercentage}
+Project: ${currentProp?.name}
+Category: ${currentProp?.category}
+Location: ${currentProp?.location.fullAddress}
+Configurations: ${currentProp?.configurations.join(', ')}
+Price Range: ${currentProp?.priceDisplay}
+RERA Approved: ${currentProp?.reraNumber}
+Total Land Parcel: ${currentProp?.landArea}
+Open Space: ${currentProp?.openSpacePercentage}
 
 DESCRIPTION:
-${currentProp.description}
+${currentProp?.description}
 
 HIGHLIGHTS:
-${currentProp.highlights.map(h => `- ${h}`).join('\n')}
+${currentProp?.highlights.map(h => `- ${h}`).join('\n')}
 
 SPECIFICATIONS:
-- Structure: ${currentProp.specifications.structure}
-- Flooring: ${currentProp.specifications.flooring}
-- Doors: ${currentProp.specifications.doors}
-- Kitchen: ${currentProp.specifications.kitchen}
-- Sanitary: ${currentProp.specifications.sanitary}
+- Structure: ${currentProp?.specifications.structure}
+- Flooring: ${currentProp?.specifications.flooring}
+- Doors: ${currentProp?.specifications.doors}
+- Kitchen: ${currentProp?.specifications.kitchen}
+- Sanitary: ${currentProp?.specifications.sanitary}
 
 SALES OFFICE & EXPERIENCE CENTER:
 Neopolis Boulevard, Golden Mile Road, Kokapet, Hyderabad
@@ -71,7 +72,7 @@ Helpline: +91 98765 43210 | sales@airainfra.com
 ====================================================`
       ], { type: 'text/plain;charset=utf-8' });
       element.href = URL.createObjectURL(file);
-      element.download = `${currentProp.id}-brochure-airainfra.txt`;
+      element.download = `${currentProp?.id}-brochure-airainfra.txt`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -87,7 +88,7 @@ Helpline: +91 98765 43210 | sales@airainfra.com
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={downloaded ? "Brochure Downloaded!" : `Download ${currentProp.name} Brochure`}
+      title={downloaded ? "Brochure Downloaded!" : `Download ${currentProp?.name} Brochure`}
       subtitle={downloaded ? "The comprehensive project booklet is ready." : "Get floor plans, price breakdown, master plan, and full specifications."}
       maxWidth="540px"
     >
@@ -112,7 +113,7 @@ Helpline: +91 98765 43210 | sales@airainfra.com
             Thank You, {formData.name}!
           </h4>
           <p style={{ color: '#475569', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '20px' }}>
-            Your official <strong>{currentProp.name}</strong> digital brochure has started downloading. A high-res PDF copy and interactive 3D tour link have also been sent to <strong>{formData.phone}</strong>.
+            Your official <strong>{currentProp?.name}</strong> digital brochure has started downloading. A high-res PDF copy and interactive 3D tour link have also been sent to <strong>{formData.phone}</strong>.
           </p>
           <div style={{ backgroundColor: '#fff7ed', padding: '14px', borderRadius: '12px', border: '1px solid #ffedd5', marginBottom: '24px' }}>
             <span style={{ fontSize: '0.85rem', color: '#c2410c', fontWeight: 600 }}>
@@ -125,7 +126,7 @@ Helpline: +91 98765 43210 | sales@airainfra.com
         </div>
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
+
           {/* Project Preview Card */}
           <div
             style={{
@@ -138,19 +139,19 @@ Helpline: +91 98765 43210 | sales@airainfra.com
             }}
           >
             <img
-              src={currentProp.heroImage}
-              alt={currentProp.name}
+              src={currentProp?.heroImage}
+              alt={currentProp?.name}
               style={{ width: '80px', height: '64px', borderRadius: '8px', objectFit: 'cover' }}
             />
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f15a24', letterSpacing: '0.05em' }}>
-                {currentProp.category} · {currentProp.location.area}
+                {currentProp?.category} · {currentProp?.location.area}
               </div>
               <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 700, color: '#110e2e' }}>
-                {currentProp.name}
+                {currentProp?.name}
               </div>
               <div style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-                {currentProp.priceDisplay}
+                {currentProp?.priceDisplay}
               </div>
             </div>
           </div>

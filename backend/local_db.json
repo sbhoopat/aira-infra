@@ -1,0 +1,69 @@
+{
+  "properties": {
+    "aria-miyapur": {
+      "name": "Aria miyapur",
+      "tagline": "HighRise",
+      "type": "Apartments",
+      "category": "APARTMENTS",
+      "status": "Ongoing",
+      "status_badge": "Ongoing",
+      "rera_approved": true,
+      "rera_number": "P02400008892",
+      "featured": false,
+      "price_display": "\u20b91.5 Cr - \u20b92.8 Cr",
+      "price_min": 15000000,
+      "price_max": 28000000,
+      "price_per_sqft": 8500,
+      "location": {
+        "area": "Shankarpally",
+        "city": "Hyderabad",
+        "fullAddress": "Shankarpally, Hyderabad, Telangana",
+        "pincode": "500075",
+        "coordinates": {
+          "lat": 17.4125,
+          "lng": 78.3276
+        }
+      },
+      "configurations": [
+        "3 BHK",
+        "4 BHK"
+      ],
+      "bhk_display": "3 & 4 BHK",
+      "area_display": "1,850 - 3,200 Sq. Ft.",
+      "area_min": 1850,
+      "area_max": 3200,
+      "possession_date": "December 2027",
+      "total_units": 240,
+      "towers": 3,
+      "floors": "G + 35 Floors",
+      "land_area": "5.2 Acres",
+      "open_space_percentage": "76%",
+      "developer": "Aira Infra Developers Ltd.",
+      "hero_image": "https://westside-properties.com/wp-content/uploads/2025/06/El7.png",
+      "images": [
+        "https://westside-properties.com/wp-content/uploads/2025/06/El7.png"
+      ],
+      "video_url": "https://www.youtube.com/watch?v=Pa6bW6Xgr6g",
+      "brochure_url": "",
+      "description": "Aira Infra presents ultra-modern architecture engineered for maximum sunlight and natural air corridors with room to breathe.",
+      "highlights": [
+        "50,000 Sq. Ft. Club Elegance",
+        "Temperature-Controlled Infinity Pool",
+        "100% Vastu Compliant East & West Units",
+        "EV Fast Charging Stations"
+      ],
+      "amenities": [
+        "Swimming Pool",
+        "Clubhouse",
+        "Gym & Fitness Center",
+        "EV Charging",
+        "24/7 Security & CCTV",
+        "Landscaped Zen Gardens"
+      ],
+      "floor_plans": [],
+      "specifications": {},
+      "nearby_landmarks": [],
+      "id": "aria-miyapur"
+    }
+  }
+}
