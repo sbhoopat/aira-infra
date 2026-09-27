@@ -66,10 +66,10 @@ export function PropertyProvider({ children }) {
     async function loadSupabaseData() {
       try {
         setIsLoadingFromSupabase(true);
-        
+
         // 1. Fetch Properties from Backend
         const { data: propsData, error: propsError } = await getPropertiesFromBackend();
-        
+
         if (!propsError && propsData && propsData.length > 0) {
           if (isMounted) {
             // Normalize field names if needed
@@ -223,10 +223,10 @@ export function PropertyProvider({ children }) {
     try {
       // 1. Save to Backend
       const { data: supabaseLead, error } = await insertInquiryToBackend(enquiryData);
-      
+
       // 2. Also save to LocalStorage fallback
       const localSaved = saveEnquiry(enquiryData);
-      
+
       // Update local state immediately
       const newLead = {
         id: supabaseLead?.id || localSaved?.id || `ENQ-${Date.now()}`,
@@ -244,7 +244,10 @@ export function PropertyProvider({ children }) {
       };
 
       setEnquiries(prev => [newLead, ...prev]);
-      showToast('Thank you! Your request has been received. Our sales advisor will contact you within 15 minutes.', 'success');
+
+      showToast('Thank you! Your request has been recorded. Our sales advisor will reach out shortly.', 'success');
+
+
       return true;
     } catch (err) {
       console.error('Enquiry submission error:', err);
@@ -270,7 +273,7 @@ export function PropertyProvider({ children }) {
     try {
       // Generate ID slug
       const id = newPropertyData.id || newPropertyData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      
+
       const payload = {
         id: id,
         name: newPropertyData.name,
@@ -322,7 +325,7 @@ export function PropertyProvider({ children }) {
 
       // 1. Insert into Backend
       const { data: inserted, error } = await insertPropertyToBackend(payload);
-      
+
       // Normalized Object for React state
       const formatted = {
         ...payload,
@@ -437,7 +440,7 @@ export function PropertyProvider({ children }) {
 
     // BHK filter
     if (filters.bhk && filters.bhk.length > 0) {
-      const hasBHK = filters.bhk.some(selectedBhk => 
+      const hasBHK = filters.bhk.some(selectedBhk =>
         (prop.configurations || []).some(c => c.includes(selectedBhk.replace(' BHK', '')))
       );
       if (!hasBHK) return false;
@@ -456,7 +459,7 @@ export function PropertyProvider({ children }) {
 
     // Amenities
     if (filters.amenities && filters.amenities.length > 0) {
-      const hasAllAmenities = filters.amenities.every(amenity => 
+      const hasAllAmenities = filters.amenities.every(amenity =>
         (prop.amenities || []).includes(amenity)
       );
       if (!hasAllAmenities) return false;

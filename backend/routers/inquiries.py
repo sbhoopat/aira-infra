@@ -3,6 +3,8 @@ from typing import List, Dict, Any
 from models import InquiryCreate, InquiryStatusUpdate, InquiryResponse, UserResponse
 from database import DatabaseService
 from routers.auth import require_admin
+from email_service import send_enquiry_email
+import threading
 
 router = APIRouter(prefix="/api/inquiries", tags=["Inquiries & Leads"])
 
@@ -17,6 +19,9 @@ async def submit_inquiry(inquiry: InquiryCreate):
     """Public customer endpoint to submit site visit requests, price inquiries, and brochure leads."""
     data = inquiry.dict()
     saved = DatabaseService.create_inquiry(data)
+
+    threading.Thread(target=send_enquiry_email, args=(data,)).start()
+
     return {
         "success": True,
         "message": "Thank you! Your request has been recorded. Our sales advisor will reach out shortly.",
