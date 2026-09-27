@@ -1,11 +1,11 @@
 /**
  * Aira Infra Unified API Client
- * Connects to Python FastAPI Backend (http://localhost:8000) with seamless Supabase fallback.
+ * Connects to Python FastAPI Backend (https://aira-infra-backend.vercel.app) with seamless Supabase fallback.
  */
 
 import { supabase, insertPropertyToSupabase, updatePropertyInSupabase, deletePropertyFromSupabase } from '../lib/supabase';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://aira-infra-backend.vercel.app/api';
 
 function getAuthHeaders() {
   const token = localStorage.getItem('aira_jwt_token');

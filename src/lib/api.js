@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = import.meta.env.PROD ? 'https://aira-infra-backend.vercel.app/api' : 'https://aira-infra-backend.vercel.app/api';
 
 const getToken = () => localStorage.getItem('aira_access_token');
 
@@ -9,12 +9,12 @@ export async function fetchApi(endpoint, options = {}) {
     ...(token && { 'Authorization': `Bearer ${token}` }),
     ...options.headers
   };
-  
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers
   });
-  
+
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.detail || 'API Request failed');
@@ -55,16 +55,16 @@ export async function getInquiriesFromBackend() {
 export async function insertInquiryToBackend(inquiry) {
   try {
     const payload = {
-        property_id: inquiry.propertyId || inquiry.property_id || null,
-        property_name: inquiry.propertyName || inquiry.property_name || 'General Enquiry',
-        name: inquiry.name,
-        phone: inquiry.phone,
-        email: inquiry.email || null,
-        type: inquiry.type || 'General Enquiry',
-        visit_date: inquiry.visitDate || inquiry.visit_date || null,
-        visit_time: inquiry.visitTime || inquiry.visit_time || null,
-        message: inquiry.message || null,
-        source: inquiry.source || 'Website'
+      property_id: inquiry.propertyId || inquiry.property_id || null,
+      property_name: inquiry.propertyName || inquiry.property_name || 'General Enquiry',
+      name: inquiry.name,
+      phone: inquiry.phone,
+      email: inquiry.email || null,
+      type: inquiry.type || 'General Enquiry',
+      visit_date: inquiry.visitDate || inquiry.visit_date || null,
+      visit_time: inquiry.visitTime || inquiry.visit_time || null,
+      message: inquiry.message || null,
+      source: inquiry.source || 'Website'
     };
     const data = await fetchApi('/inquiries', {
       method: 'POST',

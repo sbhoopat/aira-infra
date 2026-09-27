@@ -7,7 +7,7 @@ A modern, high-performance REST API built with **FastAPI** and **Supabase** for 
 - **Property Portfolio CRUD**: Public search, filtering, and admin-only add, update, delete operations.
 - **Sales Leads & Site Visit CRM**: Real-time customer inquiry tracking and status pipeline.
 - **Admin RBAC Authentication**: JWT tokens and role verification (Admin, Staff).
-- **FastAPI OpenAPI Swagger**: Automatic interactive documentation at `http://localhost:8000/docs`.
+- **FastAPI OpenAPI Swagger**: Automatic interactive documentation at `https://aira-infra-backend.vercel.app/docs`.
 
 ---
 
@@ -34,8 +34,8 @@ pip install -r requirements.txt
 ```bash
 uvicorn main:app --reload --port 8000
 ```
-- API Root: `http://localhost:8000`
-- Interactive API Docs: `http://localhost:8000/docs`
+- API Root: `https://aira-infra-backend.vercel.app`
+- Interactive API Docs: `https://aira-infra-backend.vercel.app/docs`
 
 ---
 
