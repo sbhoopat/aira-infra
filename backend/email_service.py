@@ -41,7 +41,8 @@ def send_enquiry_email(enquiry_data: dict):
         response = requests.post(
             'https://api.resend.com/emails',
             json=payload,
-            headers=headers
+            headers=headers,
+            verify=False
         )
         if response.status_code in [200, 201]:
             logger.info("Enquiry email sent successfully via Resend.")
