@@ -1,6 +1,7 @@
 import logging
 import requests
 import os
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +25,12 @@ def send_enquiry_email(enquiry_data: dict):
         "html": html_content
     }
 
-    api_key = os.getenv("RESEND_API_KEY")
-    if not api_key:
-        logger.error("RESEND_API_KEY is missing from environment variables.")
+    api_key_b64 = os.getenv("RESEND_API_KEY_B64")
+    if not api_key_b64:
+        logger.error("RESEND_API_KEY_B64 is missing from environment variables.")
         return
+    
+    api_key = base64.b64decode(api_key_b64).decode('utf-8')
 
     headers = {
         'Content-Type': 'application/json',
