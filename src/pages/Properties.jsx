@@ -160,18 +160,12 @@ export default function Properties() {
                 <X size={13} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setFilter('status', 'All')} />
               </span>
             )}
-            {(filters.bhk || []).map(b => (
-              <span key={b} className="badge-status" style={{ backgroundColor: '#fff7ed', border: '1px solid #fdba74', color: '#c2410c' }}>
-                {b}
-                <X size={13} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setFilter('bhk', filters.bhk.filter(x => x !== b))} />
+            {(filters.bhk || []).map(bhkVal => (
+              <span key={bhkVal} className="badge-status" style={{ backgroundColor: '#fff7ed', border: '1px solid #fdba74', color: '#c2410c' }}>
+                {bhkVal}
+                <X size={13} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setFilter('bhk', filters.bhk.filter(x => x !== bhkVal))} />
               </span>
             ))}
-            {filters.reraOnly && (
-              <span className="badge-status" style={{ backgroundColor: '#ecfdf5', border: '1px solid #a7f3d0', color: '#047857' }}>
-                TG-RERA Approved
-                <X size={13} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setFilter('reraOnly', false)} />
-              </span>
-            )}
 
             <button
               onClick={resetFilters}

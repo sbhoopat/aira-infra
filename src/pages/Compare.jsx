@@ -202,20 +202,10 @@ export default function Compare() {
                 <tbody>
                   {/* Price */}
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Price Range</td>
+                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Price</td>
                     {comparedProperties.map(p => (
                       <td key={p.id} style={{ padding: '16px 24px', fontWeight: 800, color: '#f15a24', fontSize: '1.05rem' }}>
-                        {p.priceDisplay}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Price Per Sq Ft */}
-                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Avg. Rate</td>
-                    {comparedProperties.map(p => (
-                      <td key={p.id} style={{ padding: '16px 24px', color: '#475569', fontSize: '0.9rem' }}>
-                        ₹{p.pricePerSqFt?.toLocaleString('en-IN')} / Sq. Ft.
+                        {p.priceDisplay || p.price_display || 'On Request'}
                       </td>
                     ))}
                   </tr>
@@ -225,7 +215,7 @@ export default function Compare() {
                     <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Type</td>
                     {comparedProperties.map(p => (
                       <td key={p.id} style={{ padding: '16px 24px', color: '#1e293b', fontWeight: 600 }}>
-                        {p.type}
+                        {p.type || p.category}
                       </td>
                     ))}
                   </tr>
@@ -235,17 +225,17 @@ export default function Compare() {
                     <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Configurations</td>
                     {comparedProperties.map(p => (
                       <td key={p.id} style={{ padding: '16px 24px', color: '#1e293b', fontWeight: 600 }}>
-                        {p.bhkDisplay}
+                        {Array.isArray(p.configurations) ? p.configurations.join(', ') : p.configurations}
                       </td>
                     ))}
                   </tr>
 
                   {/* Area */}
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Area Range</td>
+                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Area / Sizes</td>
                     {comparedProperties.map(p => (
                       <td key={p.id} style={{ padding: '16px 24px', color: '#475569' }}>
-                        {p.areaDisplay}
+                        {p.areaDisplay || p.area_display || 'On Request'}
                       </td>
                     ))}
                   </tr>
@@ -258,27 +248,17 @@ export default function Compare() {
                         <span className="badge-status" style={{ display: 'inline-block', marginBottom: '4px' }}>
                           {p.status}
                         </span>
-                        <div style={{ fontSize: '0.8125rem', color: '#64748b' }}>{p.possessionDate}</div>
+                        <div style={{ fontSize: '0.8125rem', color: '#64748b' }}>{p.possessionDate || p.possession_date || 'On Request'}</div>
                       </td>
                     ))}
                   </tr>
 
-                  {/* TG-RERA */}
+                  {/* Units & Floors */}
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>RERA Number</td>
+                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Units & Floors</td>
                     {comparedProperties.map(p => (
                       <td key={p.id} style={{ padding: '16px 24px', color: '#059669', fontWeight: 600, fontSize: '0.875rem' }}>
-                        {p.reraNumber}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Land & Density */}
-                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 700, color: '#334155', backgroundColor: '#fcfcfb' }}>Land & Open Space</td>
-                    {comparedProperties.map(p => (
-                      <td key={p.id} style={{ padding: '16px 24px', color: '#475569', fontSize: '0.875rem' }}>
-                        {p.landArea} ({p.openSpacePercentage} Open Space)
+                        {p.totalUnits || p.total_units || 'N/A'} Units, {p.floors || 'N/A'}
                       </td>
                     ))}
                   </tr>

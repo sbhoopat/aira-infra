@@ -19,10 +19,42 @@ export default function PropertyCard({ property }) {
       <div className="card-img-wrapper">
         <Link to={`/property/${property.id}`}>
           <img
-            src={property.heroImage}
+            src={(() => {
+              // Array of luxury real estate placeholders
+              const placeholders = [
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687931-cebf1036f585?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80'
+              ];
+              
+              const pId = property.id || property.name || 'default';
+              const imgIndex = pId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % placeholders.length;
+
+              if (!property.heroImage || property.heroImage.includes('placeholder-property.jpg')) {
+                return placeholders[imgIndex];
+              }
+              return property.heroImage;
+            })()}
             alt={property.name}
             className="card-img"
             loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null; 
+              const placeholders = [
+                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687931-cebf1036f585?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80'
+              ];
+              const pId = property.id || property.name || 'default';
+              const imgIndex = pId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % placeholders.length;
+              e.target.src = placeholders[imgIndex];
+            }}
           />
         </Link>
 
@@ -158,7 +190,7 @@ export default function PropertyCard({ property }) {
         >
           {/* Configurations */}
           <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#64748b' }}>
-            {property.bhkDisplay || property.configurations.join(' & ')}
+            {Array.isArray(property.configurations) ? property.configurations.join(', ') : property.configurations || 'N/A'}
           </div>
 
           {/* Pricing */}
@@ -170,7 +202,7 @@ export default function PropertyCard({ property }) {
               color: '#110e2e'
             }}
           >
-            {property.priceDisplay}
+            {property.priceDisplay || property.price_display || 'On Request'}
           </div>
         </div>
 

@@ -37,6 +37,7 @@ import {
 import { formatDate, formatCurrency } from '../utils/formatters';
 import { HYDERABAD_AREAS, PROPERTY_STATUSES, PROPERTY_TYPES } from '../data/propertiesData';
 import { SUPABASE_PROJECT_ID, SUPABASE_URL } from '../lib/supabase';
+import * as XLSX from 'xlsx';
 
 const AMENITY_OPTIONS = [
   'Swimming Pool',
@@ -84,37 +85,25 @@ export default function Admin() {
 
   const initialProjectState = {
     name: '',
-    tagline: '',
     type: 'Apartments',
-    status: 'Ongoing',
+    category: 'RESIDENTIAL',
     area: 'Kokapet',
-    fullAddress: '',
-    priceDisplay: '₹1.5 Cr - ₹2.8 Cr',
-    priceMin: 15000000,
-    priceMax: 28000000,
-    pricePerSqFt: 8500,
-    configurations: ['3 BHK', '4 BHK'],
-    bhkDisplay: '3 & 4 BHK',
+    city: 'Hyderabad',
+    configurations: '3 BHK',
     areaDisplay: '1,850 - 3,200 Sq. Ft.',
-    areaMin: 1850,
-    areaMax: 3200,
+    priceDisplay: 'On Request',
     possessionDate: 'December 2027',
-    totalUnits: 240,
-    towers: 3,
-    floors: 'G + 35 Floors',
-    landArea: '5.2 Acres',
-    openSpacePercentage: '76%',
-    reraNumber: 'P02400008892',
-    heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-    images: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80'
-    ],
-    videoUrl: 'https://www.youtube.com/watch?v=Pa6bW6Xgr6g',
+    totalUnits: 0,
+    floors: '',
+    tagline: '',
+    heroImage: '',
+    images: [],
     brochureUrl: '',
-    description: 'Aira Infra presents ultra-modern architecture engineered for maximum sunlight and natural air corridors with room to breathe.',
-    highlights: '50,000 Sq. Ft. Club Elegance\nTemperature-Controlled Infinity Pool\n100% Vastu Compliant East & West Units\nEV Fast Charging Stations',
-    amenities: ['Swimming Pool', 'Clubhouse', 'Gym & Fitness Center', 'EV Charging', '24/7 Security & CCTV', 'Landscaped Zen Gardens']
+    googleDriveUrl: '',
+    leadRegist: '',
+    cpCode: '',
+    locationMapUrl: '',
+    status: 'Ongoing'
   };
 
   const [projectForm, setProjectForm] = useState(initialProjectState);
@@ -142,6 +131,7 @@ export default function Admin() {
   const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState('admin');
   const [userCreating, setUserCreating] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   // Copied SQL state
   const [copiedSql, setCopiedSql] = useState(false);
@@ -158,34 +148,25 @@ export default function Admin() {
     setEditingProjectId(prop.id);
     setProjectForm({
       name: prop.name || '',
-      tagline: prop.tagline || '',
       type: prop.type || 'Apartments',
-      status: prop.status || 'Ongoing',
-      area: prop.location?.area || 'Kokapet',
-      fullAddress: prop.location?.fullAddress || '',
-      priceDisplay: prop.priceDisplay || '',
-      priceMin: prop.priceMin || 15000000,
-      priceMax: prop.priceMax || 30000000,
-      pricePerSqFt: prop.pricePerSqFt || 8500,
-      configurations: prop.configurations || ['3 BHK', '4 BHK'],
-      bhkDisplay: prop.bhkDisplay || '3 & 4 BHK',
-      areaDisplay: prop.areaDisplay || '',
-      areaMin: prop.areaMin || 1800,
-      areaMax: prop.areaMax || 3000,
-      possessionDate: prop.possessionDate || 'December 2027',
-      totalUnits: prop.totalUnits || 100,
-      towers: prop.towers || 2,
-      floors: prop.floors || 'G + 30 Floors',
-      landArea: prop.landArea || '5 Acres',
-      openSpacePercentage: prop.openSpacePercentage || '75%',
-      reraNumber: prop.reraNumber || '',
-      heroImage: prop.heroImage || '',
-      images: prop.images || [prop.heroImage || ''],
-      videoUrl: prop.videoUrl || 'https://www.youtube.com/watch?v=Pa6bW6Xgr6g',
-      brochureUrl: prop.brochureUrl || '',
-      description: prop.description || '',
-      highlights: (prop.highlights || []).join('\n'),
-      amenities: prop.amenities || ['Swimming Pool', 'Clubhouse', 'Gym & Fitness Center']
+      category: prop.category || 'RESIDENTIAL',
+      area: prop.location?.area || '',
+      city: prop.location?.city || 'Hyderabad',
+      configurations: Array.isArray(prop.configurations) ? prop.configurations.join(', ') : (prop.configurations || ''),
+      areaDisplay: prop.area_display || prop.areaDisplay || '',
+      priceDisplay: prop.price_display || prop.priceDisplay || '',
+      possessionDate: prop.possession_date || prop.possessionDate || '',
+      totalUnits: prop.total_units || prop.totalUnits || 0,
+      floors: prop.floors || '',
+      tagline: prop.tagline || '',
+      heroImage: prop.hero_image || prop.heroImage || '',
+      images: prop.images || [],
+      brochureUrl: prop.brochure_url || prop.brochureUrl || '',
+      googleDriveUrl: prop.google_drive_url || prop.googleDriveUrl || '',
+      leadRegist: prop.lead_regist || prop.leadRegist || '',
+      cpCode: prop.cp_code || prop.cpCode || '',
+      locationMapUrl: prop.location_map_url || prop.locationMapUrl || '',
+      status: prop.status || 'Ongoing'
     });
     setIsProjectModalOpen(true);
   };
@@ -198,20 +179,29 @@ export default function Admin() {
       return;
     }
 
-    const highlightsArray = projectForm.highlights
-      ? projectForm.highlights.split('\n').map(s => s.trim()).filter(Boolean)
-      : ['Luxury Space Engineering', '100% Vastu Compliant'];
-
     const payload = {
-      ...projectForm,
-      highlights: highlightsArray,
+      name: projectForm.name,
+      type: projectForm.type,
+      category: projectForm.category,
       location: {
         area: projectForm.area,
-        city: 'Hyderabad',
-        fullAddress: projectForm.fullAddress || `${projectForm.area}, Hyderabad, Telangana`,
-        pincode: '500075',
-        coordinates: { lat: 17.4125, lng: 78.3276 }
-      }
+        city: projectForm.city
+      },
+      configurations: projectForm.configurations.split(',').map(s => s.trim()).filter(Boolean),
+      area_display: projectForm.areaDisplay,
+      price_display: projectForm.priceDisplay,
+      possession_date: projectForm.possessionDate,
+      total_units: Number(projectForm.totalUnits),
+      floors: projectForm.floors,
+      tagline: projectForm.tagline,
+      hero_image: projectForm.heroImage,
+      images: projectForm.images.length ? projectForm.images : [projectForm.heroImage],
+      brochure_url: projectForm.brochureUrl,
+      google_drive_url: projectForm.googleDriveUrl,
+      lead_regist: projectForm.leadRegist,
+      cp_code: projectForm.cpCode,
+      location_map_url: projectForm.locationMapUrl,
+      status: projectForm.status
     };
 
     if (editingProjectId) {
@@ -221,6 +211,40 @@ export default function Admin() {
     }
 
     setIsProjectModalOpen(false);
+  };
+
+  // Upload Excel
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const token = localStorage.getItem('aira_access_token');
+      const response = await fetch('http://localhost:8000/api/properties/upload-excel', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        showToast(result.message || 'Successfully imported properties from Excel!', 'success');
+        // Refresh properties if possible (depends on context, maybe window.location.reload())
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        showToast(result.detail || 'Failed to upload Excel file.', 'error');
+      }
+    } catch (err) {
+      showToast('Error uploading file.', 'error');
+      console.error(err);
+    } finally {
+      e.target.value = ''; // Reset input
+    }
   };
 
   // Add Image to Gallery
@@ -556,14 +580,31 @@ export default function Admin() {
                 </span>
               </div>
 
-              <button
-                onClick={handleOpenAddModal}
-                className="btn-primary"
-                style={{ padding: '10px 20px', fontSize: '0.875rem' }}
-              >
-                <Plus size={16} />
-                <span>Add New Project</span>
-              </button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <input 
+                  type="file" 
+                  accept=".xlsx, .xls, .csv" 
+                  style={{ display: 'none' }} 
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn-secondary"
+                  style={{ padding: '10px 20px', fontSize: '0.875rem', backgroundColor: '#ffffff', border: '1px solid #cbd5e1', color: '#334155', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  <FileDown size={16} />
+                  <span>Upload Excel</span>
+                </button>
+                <button
+                  onClick={handleOpenAddModal}
+                  className="btn-primary"
+                  style={{ padding: '10px 20px', fontSize: '0.875rem' }}
+                >
+                  <Plus size={16} />
+                  <span>Add New Project</span>
+                </button>
+              </div>
             </div>
 
             {/* Projects Grid */}
@@ -584,9 +625,46 @@ export default function Admin() {
                   {/* Image with Badges */}
                   <div style={{ position: 'relative', height: '200px' }}>
                     <img
-                      src={prop.heroImage || prop.images?.[0]}
+                      src={(() => {
+                        const gUrl = prop.google_drive_url;
+                        if (gUrl) {
+                          const match = gUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || gUrl.match(/id=([a-zA-Z0-9_-]+)/) || gUrl.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+                          if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+                        }
+                        
+                        const placeholders = [
+                          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600607687931-cebf1036f585?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80'
+                        ];
+                        const pId = prop.id || prop.name || 'default';
+                        const imgIndex = pId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % placeholders.length;
+
+                        const img = prop.heroImage || prop.images?.[0];
+                        if (!img || img.includes('placeholder-property.jpg')) {
+                          return placeholders[imgIndex];
+                        }
+                        return img;
+                      })()}
                       alt={prop.name}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        const placeholders = [
+                          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600607687931-cebf1036f585?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
+                          'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1200&q=80'
+                        ];
+                        const pId = prop.id || prop.name || 'default';
+                        const imgIndex = pId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % placeholders.length;
+                        e.target.src = placeholders[imgIndex];
+                      }}
                     />
                     <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', gap: '6px' }}>
                       <span className="badge-status">{prop.status}</span>
@@ -1187,33 +1265,149 @@ export default function Admin() {
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
                   />
                 </div>
+              </div>
 
+              {/* Row 4: Configs, Sizes, Prices, Possession */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                    Price Min (₹)
+                    Configurations (BHK)
                   </label>
                   <input
-                    type="number"
-                    value={projectForm.priceMin}
-                    onChange={e => setProjectForm({ ...projectForm, priceMin: Number(e.target.value) })}
+                    type="text"
+                    value={projectForm.configurations}
+                    onChange={e => setProjectForm({ ...projectForm, configurations: e.target.value })}
+                    placeholder="e.g. 2,3,4 BHK"
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
                   />
                 </div>
-
                 <div>
                   <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                    Price Max (₹)
+                    Area / Sizes
                   </label>
                   <input
-                    type="number"
-                    value={projectForm.priceMax}
-                    onChange={e => setProjectForm({ ...projectForm, priceMax: Number(e.target.value) })}
+                    type="text"
+                    value={projectForm.areaDisplay}
+                    onChange={e => setProjectForm({ ...projectForm, areaDisplay: e.target.value })}
+                    placeholder="e.g. 1500sft - 2500sft"
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Price Display
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.priceDisplay}
+                    onChange={e => setProjectForm({ ...projectForm, priceDisplay: e.target.value })}
+                    placeholder="On Request"
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Possession
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.possessionDate}
+                    onChange={e => setProjectForm({ ...projectForm, possessionDate: e.target.value })}
                     style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
                   />
                 </div>
               </div>
 
-              {/* Row 4: Hero Image URL & Live Preview */}
+              {/* Row 4: Units, Floors, City */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Total Units
+                  </label>
+                  <input
+                    type="number"
+                    value={projectForm.totalUnits}
+                    onChange={e => setProjectForm({ ...projectForm, totalUnits: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Floors
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.floors}
+                    onChange={e => setProjectForm({ ...projectForm, floors: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.city}
+                    onChange={e => setProjectForm({ ...projectForm, city: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Row 5: Links and Metadata */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Google Drive URL
+                  </label>
+                  <input
+                    type="url"
+                    value={projectForm.googleDriveUrl}
+                    onChange={e => setProjectForm({ ...projectForm, googleDriveUrl: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Location Map URL
+                  </label>
+                  <input
+                    type="url"
+                    value={projectForm.locationMapUrl}
+                    onChange={e => setProjectForm({ ...projectForm, locationMapUrl: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Row 6: Leads and CP */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    Lead Registration Email
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.leadRegist}
+                    onChange={e => setProjectForm({ ...projectForm, leadRegist: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
+                    CP Code
+                  </label>
+                  <input
+                    type="text"
+                    value={projectForm.cpCode}
+                    onChange={e => setProjectForm({ ...projectForm, cpCode: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Row 7: Images */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
                   Hero Image URL
@@ -1223,7 +1417,6 @@ export default function Admin() {
                     type="url"
                     value={projectForm.heroImage}
                     onChange={e => setProjectForm({ ...projectForm, heroImage: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
                     style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
                   />
                   {projectForm.heroImage && (
@@ -1239,140 +1432,24 @@ export default function Admin() {
               {/* Dynamic Gallery Image Manager */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  Gallery Images (Attach Multiple Photos)
+                  Gallery Images
                 </label>
-                
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
                   <input
                     type="url"
-                    placeholder="Paste additional image URL (e.g. living room, pool, bedroom)..."
                     value={newGalleryImage}
                     onChange={e => setNewGalleryImage(e.target.value)}
                     style={{ flex: 1, padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}
                   />
-                  <button
-                    type="button"
-                    onClick={handleAddGalleryImage}
-                    style={{
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      backgroundColor: '#f15a24',
-                      color: '#ffffff',
-                      fontSize: '0.8125rem',
-                      fontWeight: 700,
-                      border: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    + Add Image
-                  </button>
+                  <button type="button" onClick={handleAddGalleryImage} style={{ padding: '8px 16px', borderRadius: '8px', backgroundColor: '#f15a24', color: '#ffffff', border: 'none', cursor: 'pointer' }}>+ Add</button>
                 </div>
-
-                {/* Gallery Thumbnails List */}
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {projectForm.images.map((imgUrl, idx) => (
-                    <div key={idx} style={{ position: 'relative', width: '80px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #cbd5e1' }}>
-                      <img src={imgUrl} alt={`Thumb ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveGalleryImage(idx)}
-                        style={{
-                          position: 'absolute',
-                          top: '2px',
-                          right: '2px',
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '50%',
-                          backgroundColor: 'rgba(0,0,0,0.7)',
-                          color: '#ffffff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '10px',
-                          border: 'none',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        ✕
-                      </button>
+                    <div key={idx} style={{ position: 'relative', width: '80px', height: '60px', borderRadius: '8px', overflow: 'hidden' }}>
+                      <img src={imgUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button type="button" onClick={() => handleRemoveGalleryImage(idx)} style={{ position: 'absolute', top: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none' }}>✕</button>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Video Walkthrough URL */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  Video Walkthrough URL (YouTube or MP4)
-                </label>
-                <input
-                  type="url"
-                  value={projectForm.videoUrl}
-                  onChange={e => setProjectForm({ ...projectForm, videoUrl: e.target.value })}
-                  placeholder="https://www.youtube.com/watch?v=Pa6bW6Xgr6g"
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  Detailed Project Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={projectForm.description}
-                  onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                />
-              </div>
-
-              {/* Key Highlights */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                  Key Highlights (One per line)
-                </label>
-                <textarea
-                  rows={3}
-                  value={projectForm.highlights}
-                  onChange={e => setProjectForm({ ...projectForm, highlights: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                />
-              </div>
-
-              {/* Amenities Checkbox Picker */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                  Amenities & Facilities
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '8px' }}>
-                  {AMENITY_OPTIONS.map(amenity => {
-                    const isChecked = projectForm.amenities.includes(amenity);
-                    return (
-                      <button
-                        type="button"
-                        key={amenity}
-                        onClick={() => handleToggleAmenity(amenity)}
-                        style={{
-                          textAlign: 'left',
-                          padding: '7px 12px',
-                          borderRadius: '8px',
-                          fontSize: '0.8125rem',
-                          fontWeight: 600,
-                          border: isChecked ? '1.5px solid #f15a24' : '1px solid #e2e8f0',
-                          backgroundColor: isChecked ? '#fff7ed' : '#ffffff',
-                          color: isChecked ? '#c2410c' : '#475569',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        <span>{isChecked ? '✓' : '+'}</span>
-                        <span>{amenity}</span>
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
 

@@ -86,6 +86,10 @@ class PropertyBase(BaseModel):
     floor_plans: List[Dict[str, Any]] = []
     specifications: Dict[str, Any] = {}
     nearby_landmarks: List[Dict[str, Any]] = []
+    lead_regist: Optional[str] = None
+    cp_code: Optional[str] = None
+    google_drive_url: Optional[str] = None
+    location_map_url: Optional[str] = None
 
 class PropertyCreate(PropertyBase):
     id: Optional[str] = None
@@ -108,6 +112,10 @@ class PropertyUpdate(BaseModel):
     highlights: Optional[List[str]] = None
     amenities: Optional[List[str]] = None
     featured: Optional[bool] = None
+    lead_regist: Optional[str] = None
+    cp_code: Optional[str] = None
+    google_drive_url: Optional[str] = None
+    location_map_url: Optional[str] = None
 
 class PropertyResponse(PropertyBase):
     id: str

@@ -95,7 +95,8 @@ export function PropertyProvider({ children }) {
               floorPlans: p.floor_plans ?? p.floorPlans ?? [],
               nearbyLandmarks: p.nearby_landmarks ?? p.nearbyLandmarks ?? []
             }));
-            setProperties(normalizedProps);
+            // Reverse so the newest/latest added projects show up first
+            setProperties(normalizedProps.reverse());
             setSupabaseConnected(true);
           }
         }
@@ -433,9 +434,16 @@ export function PropertyProvider({ children }) {
 
     // Type filter
     if (filters.type && filters.type !== 'All types') {
-      if ((prop.type || '').toLowerCase() !== filters.type.toLowerCase()) {
-        return false;
-      }
+      const pType = (prop.type || prop.category || '').toLowerCase().trim();
+      const fType = filters.type.toLowerCase().trim();
+      
+      let matched = false;
+      if (fType === 'apartments' && (pType.includes('flat') || pType.includes('apartment'))) matched = true;
+      else if (fType === 'villas' && (pType.includes('villa'))) matched = true;
+      else if (fType === 'plots' && (pType.includes('plot') || pType.includes('land'))) matched = true;
+      else if (pType.includes(fType) || fType.includes(pType)) matched = true;
+      
+      if (!matched) return false;
     }
 
     // BHK filter

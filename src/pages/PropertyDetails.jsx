@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useProperty } from '../context/PropertyContext';
 import PropertyGallery from '../components/property/PropertyGallery';
-import FloorPlans from '../components/property/FloorPlans';
-import AmenitiesSection from '../components/property/AmenitiesSection';
-import LocationSection from '../components/property/LocationSection';
-import EmiCalculator from '../components/property/EmiCalculator';
 import EnquiryForm from '../components/property/EnquiryForm';
 import PropertyCard from '../components/property/PropertyCard';
 import {
   MapPin,
   Calendar,
-  Layers,
   FileDown,
-  ShieldCheck,
-  CheckCircle,
-  Building,
-  Check,
   ArrowRight,
-  TrendingUp,
-  Award,
-  PhoneCall,
   Clock,
   Sparkles
 } from 'lucide-react';
@@ -28,17 +16,14 @@ import {
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { properties, openModal, isFavorite, toggleFavorite, isInCompare, addToCompare } = useProperty();
+  const { properties, openModal } = useProperty();
 
   // Find property by id or slug
   const property = properties.find(p => p.id === id) || properties[0];
 
-  const favorited = property ? isFavorite(property.id) : false;
-  const compared = property ? isInCompare(property.id) : false;
-
   const handleOpenLightbox = (index = 0) => {
     openModal('lightbox', property, {
-      images: property?.images || [property?.heroImage],
+      images: property?.images?.length ? property.images : [property?.heroImage],
       activeIndex: index
     });
   };
@@ -83,14 +68,8 @@ export default function PropertyDetails() {
         >
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span className="badge-category">{property.category || property.type.toUpperCase()}</span>
+              <span className="badge-category">{property.category || property.type?.toUpperCase()}</span>
               <span className="badge-status">{property.status}</span>
-              {property.reraApproved && (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>
-                  <ShieldCheck size={14} />
-                  <span>TG-RERA Approved</span>
-                </span>
-              )}
             </div>
 
             <h1
@@ -109,7 +88,7 @@ export default function PropertyDetails() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '1rem' }}>
               <MapPin size={18} color="#f15a24" />
-              <span>{property.location.fullAddress}</span>
+              <span>{property.location?.area}, {property.location?.city}</span>
             </div>
           </div>
 
@@ -125,7 +104,7 @@ export default function PropertyDetails() {
             }}
           >
             <span style={{ fontSize: '0.8125rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
-              Price Range
+              Price
             </span>
             <div
               style={{
@@ -136,21 +115,15 @@ export default function PropertyDetails() {
                 marginTop: '2px'
               }}
             >
-              {property.priceDisplay}
+              {property.priceDisplay || property.price_display || 'On Request'}
             </div>
-            {property.pricePerSqFt && (
-              <span style={{ fontSize: '0.8125rem', color: '#f15a24', fontWeight: 600 }}>
-                ~₹{property.pricePerSqFt.toLocaleString('en-IN')} / Sq. Ft.
-              </span>
-            )}
           </div>
         </div>
 
         {/* Gallery Component */}
         <PropertyGallery
-          images={property.images}
+          images={property.images?.length ? property.images : [property.heroImage]}
           propertyName={property.name}
-          reraNumber={property.reraNumber}
           status={property.status}
           onOpenLightbox={handleOpenLightbox}
           propertyId={property.id}
@@ -173,35 +146,35 @@ export default function PropertyDetails() {
           <div>
             <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Configurations</span>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#110e2e', marginTop: '2px' }}>
-              {property.bhkDisplay}
+              {Array.isArray(property.configurations) ? property.configurations.join(', ') : property.configurations || 'N/A'}
             </div>
           </div>
 
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Super Built-Up Area</span>
+            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Area / Sizes</span>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#110e2e', marginTop: '2px' }}>
-              {property.areaDisplay}
+              {property.areaDisplay || property.area_display || 'On Request'}
             </div>
           </div>
 
           <div>
             <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Possession Date</span>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#110e2e', marginTop: '2px' }}>
-              {property.possessionDate}
+              {property.possessionDate || property.possession_date || 'On Request'}
             </div>
           </div>
 
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Project Land Area</span>
+            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Total Units</span>
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#110e2e', marginTop: '2px' }}>
-              {property.landArea} ({property.openSpacePercentage} Open Space)
+              {property.totalUnits || property.total_units || 'N/A'}
             </div>
           </div>
 
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>TG-RERA Registration</span>
-            <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#059669', marginTop: '2px' }}>
-              {property.reraNumber}
+            <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase' }}>Floors</span>
+            <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#110e2e', marginTop: '2px' }}>
+              {property.floors || 'N/A'}
             </div>
           </div>
         </div>
@@ -239,183 +212,145 @@ export default function PropertyDetails() {
                   marginBottom: '16px'
                 }}
               >
-                {property.tagline}
+                {property.tagline || property.name}
               </h2>
-              <p
-                style={{
-                  color: '#475569',
-                  fontSize: '1.05rem',
-                  lineHeight: 1.7,
-                  marginBottom: '24px'
-                }}
-              >
-                {property.description}
-              </p>
-
-              {/* Key Highlights Bullet Cards */}
-              {property.highlights && (
-                <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#110e2e', marginBottom: '14px' }}>
-                    Signature Architectural Highlights
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                      gap: '12px'
-                    }}
-                  >
-                    {property.highlights.map((hl, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '10px',
-                          padding: '12px 14px',
-                          backgroundColor: '#fbfbfa',
-                          borderRadius: '12px',
-                          border: '1px solid #f1f5f9'
-                        }}
-                      >
-                        <CheckCircle size={18} color="#f15a24" style={{ flexShrink: 0, marginTop: '2px' }} />
-                        <span style={{ fontSize: '0.875rem', color: '#334155', fontWeight: 500, lineHeight: 1.4 }}>
-                          {hl}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
-
-            {/* Interactive Floor Plans */}
-            <FloorPlans floorPlans={property.floorPlans} property={property} />
-
-            {/* Amenities Grid */}
-            <AmenitiesSection propertyAmenities={property.amenities} />
-
-            {/* Technical Specifications Breakdown */}
-            {property.specifications && (
+            
+            {/* Complete Project Details Matrix */}
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '24px',
+                border: '1px solid #edf0f3',
+                padding: 'clamp(20px, 4vw, 36px)',
+                marginBottom: '32px'
+              }}
+            >
+              <span className="badge-category" style={{ display: 'block', marginBottom: '6px' }}>
+                COMPLETE DETAILS
+              </span>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '24px',
+                marginTop: '20px'
+              }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Project Name</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.name || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Category / Type</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.category || property.type || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Location</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.location?.area || '-'}, {property.location?.city || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Configurations (BHK)</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {Array.isArray(property.configurations) ? property.configurations.join(', ') || '-' : property.configurations || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Sizes / Area</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.areaDisplay || property.area_display || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Price</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.priceDisplay || property.price_display || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Possession Date</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.possessionDate || property.possession_date || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Total Units</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.totalUnits || property.total_units || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Floors</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.floors || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>USP / Tagline</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.tagline || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Google Drive URL</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
+                    {property.google_drive_url ? (
+                      <a href={property.google_drive_url} target="_blank" rel="noreferrer" style={{ color: '#0ea5e9' }}>
+                        View Drive
+                      </a>
+                    ) : '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Lead Registration</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
+                    {property.lead_regist || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>CP Code</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.cp_code || '-'}
+                  </div>
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Status</span>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                    {property.status || '-'}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Location Map URL Iframe if available */}
+            {property.locationMapUrl && property.locationMapUrl.includes('google.com/maps') && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
                   borderRadius: '24px',
                   border: '1px solid #edf0f3',
                   padding: 'clamp(20px, 4vw, 36px)',
-                  margin: '32px 0'
+                  marginBottom: '32px'
                 }}
               >
-                <span className="badge-category" style={{ display: 'block', marginBottom: '6px' }}>
-                  MATERIAL SPECIFICATIONS
+                 <span className="badge-category" style={{ display: 'block', marginBottom: '6px' }}>
+                  LOCATION MAP
                 </span>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: '#110e2e',
-                    marginBottom: '20px'
-                  }}
-                >
-                  Uncompromising Build Quality
-                </h3>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '20px'
-                  }}
-                >
-                  {Object.entries(property.specifications).map(([key, val]) => (
-                    <div
-                      key={key}
-                      style={{
-                        padding: '18px',
-                        borderRadius: '14px',
-                        backgroundColor: '#f8fafc',
-                        border: '1px solid #eef2f6'
-                      }}
-                    >
-                      <h5 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#f15a24', textTransform: 'capitalize', marginBottom: '6px' }}>
-                        {key}
-                      </h5>
-                      <p style={{ color: '#475569', fontSize: '0.875rem', lineHeight: 1.5, margin: 0 }}>
-                        {val}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <iframe
+                  src={property.locationMapUrl}
+                  width="100%"
+                  height="450"
+                  style={{ border: 0, borderRadius: '16px', marginTop: '16px' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             )}
-
-            {/* Construction Progress Milestone */}
-            {property.constructionProgress && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderRadius: '24px',
-                  border: '1px solid #edf0f3',
-                  padding: 'clamp(20px, 4vw, 36px)',
-                  margin: '32px 0'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <div>
-                    <span className="badge-category" style={{ display: 'block', marginBottom: '4px' }}>
-                      ON-SITE UPDATES
-                    </span>
-                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', fontWeight: 700, color: '#110e2e', margin: 0 }}>
-                      Construction Status & Timeline
-                    </h3>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f15a24' }}>
-                      {property.constructionProgress.overallPercent}%
-                    </span>
-                    <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b' }}>Overall Completion</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {property.constructionProgress.milestones.map((ms, idx) => (
-                    <div key={idx}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', marginBottom: '6px' }}>
-                        <span style={{ fontWeight: 600, color: '#1e293b' }}>{ms.title}</span>
-                        <span style={{ color: ms.percent === 100 ? '#10b981' : '#f15a24', fontWeight: 700 }}>
-                          {ms.status} ({ms.percent}%)
-                        </span>
-                      </div>
-                      <div style={{ width: '100%', height: '8px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                        <div
-                          style={{
-                            width: `${ms.percent}%`,
-                            height: '100%',
-                            backgroundColor: ms.percent === 100 ? '#10b981' : '#f15a24',
-                            borderRadius: '4px'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Location & Interactive Landmarks Map */}
-            <LocationSection
-              location={property.location}
-              landmarks={property.nearbyLandmarks || []}
-              propertyName={property.name}
-            />
-
-            {/* EMI Calculator */}
-            <EmiCalculator
-              defaultPrice={property.priceMin || 14000000}
-              propertyName={property.name}
-              property={property}
-            />
 
           </div>
 
@@ -456,14 +391,18 @@ export default function PropertyDetails() {
                     <span>Schedule Private Site Visit</span>
                   </button>
 
-                  <button
-                    onClick={() => openModal('brochure', property)}
-                    className="btn-secondary"
-                    style={{ width: '100%', padding: '12px', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }}
-                  >
-                    <FileDown size={18} />
-                    <span>Download PDF Brochure</span>
-                  </button>
+                  {property.brochureUrl && (
+                    <a
+                      href={property.brochureUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-secondary"
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '12px', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.08)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', textDecoration: 'none', fontWeight: 600 }}
+                    >
+                      <FileDown size={18} />
+                      <span>Download PDF Brochure</span>
+                    </a>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '16px', color: '#9490b8', fontSize: '0.8125rem' }}>
@@ -479,26 +418,6 @@ export default function PropertyDetails() {
                 subtitle="Guaranteed callback within 15 minutes."
               />
 
-              {/* Builder Profile Card */}
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderRadius: '20px',
-                  border: '1px solid #edf0f3',
-                  padding: '22px'
-                }}
-              >
-                <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>
-                  DEVELOPED BY
-                </span>
-                <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: '#110e2e', margin: '4px 0 8px' }}>
-                  {property.developer}
-                </h4>
-                <p style={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.5, margin: 0 }}>
-                  Aira Infra is a premier luxury real-estate developer in Hyderabad with over 15+ million sq. ft. of residential and commercial milestones delivered.
-                </p>
-              </div>
-
             </div>
           </div>
         </div>
@@ -510,7 +429,7 @@ export default function PropertyDetails() {
               <div>
                 <span className="badge-category">SIMILAR OPPORTUNITIES</span>
                 <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.85rem', fontWeight: 700, color: '#110e2e', margin: 0 }}>
-                  Other Aira Communities You May Like
+                  Other Projects You May Like
                 </h3>
               </div>
               <Link to="/properties" style={{ color: '#f15a24', fontWeight: 700, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '4px' }}>

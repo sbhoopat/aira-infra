@@ -19,7 +19,6 @@ async def submit_inquiry(inquiry: InquiryCreate):
     """Public customer endpoint to submit site visit requests, price inquiries, and brochure leads."""
     data = inquiry.dict()
     saved = DatabaseService.create_inquiry(data)
-
     threading.Thread(target=send_enquiry_email, args=(data,)).start()
 
     return {
