@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Phone, Mail, User, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Send, Phone, Mail, User, CheckCircle2, ShieldCheck, MessageCircle } from 'lucide-react';
 import { useProperty } from '../../context/PropertyContext';
 import { PROPERTIES_DATA } from '../../data/propertiesData';
 
@@ -253,14 +253,26 @@ export default function EnquiryForm({ property = null, title = "Request Property
             />
           </div>
 
-          <button
-            type="submit"
-            className="btn-primary"
-            style={{ width: '100%', padding: '12px', justifyContent: 'center', fontSize: '0.9375rem' }}
-          >
-            <Send size={16} />
-            <span>Send Instant Request</span>
-          </button>
+          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <a
+              href="tel:8886087778"
+              className="btn-primary"
+              style={{ flex: 1, padding: '12px', justifyContent: 'center', fontSize: '0.9375rem', textDecoration: 'none', backgroundColor: '#3b82f6', border: 'none' }}
+            >
+              <Phone size={16} />
+              <span>Call</span>
+            </a>
+            <a
+              href="https://wa.me/918886087778"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+              style={{ flex: 1, padding: '12px', justifyContent: 'center', fontSize: '0.9375rem', textDecoration: 'none', backgroundColor: '#25D366', color: 'white', border: 'none' }}
+            >
+              <MessageCircle size={16} />
+              <span>WhatsApp</span>
+            </a>
+          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.75rem', color: '#94a3b8' }}>
             <ShieldCheck size={14} color="#10b981" />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Heart, ArrowRight, Layers, FileDown, Eye, Check } from 'lucide-react';
+import { MapPin, Heart, ArrowRight, Layers, FileDown, Eye, Check, Phone, MessageCircle } from 'lucide-react';
 import { useProperty } from '../../context/PropertyContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -210,14 +210,14 @@ export default function PropertyCard({ property }) {
         <div
           style={{
             marginTop: '14px',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '8px'
+            display: 'flex',
+            gap: '6px'
           }}
         >
           <button
             onClick={() => openModal('brochure', property)}
             style={{
+              flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -249,6 +249,7 @@ export default function PropertyCard({ property }) {
           <Link
             to={`/property/${property.id}`}
             style={{
+              flex: 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -269,6 +270,48 @@ export default function PropertyCard({ property }) {
             <span>Explore</span>
             <ArrowRight size={14} />
           </Link>
+
+          <a
+            href="tel:8886087778"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '8px',
+              borderRadius: '10px',
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+              border: '1px solid #3b82f6'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#2563eb'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#3b82f6'; }}
+          >
+            <Phone size={14} />
+          </a>
+
+          <a
+            href="https://wa.me/918886087778"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '8px',
+              borderRadius: '10px',
+              backgroundColor: '#25D366',
+              color: '#ffffff',
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+              border: '1px solid #25D366'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#16a34a'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#25D366'; }}
+          >
+            <MessageCircle size={14} />
+          </a>
         </div>
 
         {/* Admin Quick Control Bar (Visible ONLY to logged in Admins) */}

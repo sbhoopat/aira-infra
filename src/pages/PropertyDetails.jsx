@@ -10,13 +10,20 @@ import {
   FileDown,
   ArrowRight,
   Clock,
-  Sparkles
+  Sparkles,
+  Lock,
+  Phone,
+  MessageCircle,
+  FileText,
+  Star
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { properties, openModal } = useProperty();
+  const { isAdmin } = useAuth();
 
   // Find property by id or slug
   const property = properties.find(p => p.id === id) || properties[0];
@@ -35,7 +42,7 @@ export default function PropertyDetails() {
   return (
     <div style={{ paddingTop: '24px', paddingBottom: '80px', backgroundColor: '#fbfbfa' }}>
       <div className="container">
-        
+
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
@@ -189,7 +196,7 @@ export default function PropertyDetails() {
         >
           {/* Main Content (8 cols) */}
           <div style={{ gridColumn: 'span 12' }} className="details-main-col">
-            
+
             {/* Overview & Philosophy */}
             <div
               style={{
@@ -215,7 +222,7 @@ export default function PropertyDetails() {
                 {property.tagline || property.name}
               </h2>
             </div>
-            
+
             {/* Complete Project Details Matrix */}
             <div
               style={{
@@ -271,61 +278,142 @@ export default function PropertyDetails() {
                     {property.priceDisplay || property.price_display || '-'}
                   </div>
                 </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Possession Date</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.possessionDate || property.possession_date || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Total Units</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.totalUnits || property.total_units || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Floors</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.floors || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>USP / Tagline</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.tagline || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Google Drive URL</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
-                    {property.google_drive_url ? (
-                      <a href={property.google_drive_url} target="_blank" rel="noreferrer" style={{ color: '#0ea5e9' }}>
-                        View Drive
+                {isAdmin ? (
+                  <>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Possession Date</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.possessionDate || property.possession_date || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Total Units</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.totalUnits || property.total_units || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Floors</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.floors || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>USP / Tagline</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.tagline || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Google Drive URL</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
+                        {property.google_drive_url ? (
+                          <a href={property.google_drive_url} target="_blank" rel="noreferrer" style={{ color: '#0ea5e9' }}>
+                            View Drive
+                          </a>
+                        ) : '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Lead Registration</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
+                        {property.lead_regist || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>CP Code</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.cp_code || '-'}
+                      </div>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Status</span>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
+                        {property.status || '-'}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ gridColumn: '1 / -1', marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '32px', padding: '32px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+                    <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <div style={{ backgroundColor: '#fff7ed', color: '#ea580c', padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
+                        <span>👑</span> PREMIUM PROPERTY
+                      </div>
+                      <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
+                        Additional Details
+                      </h3>
+                      <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.6, marginBottom: '24px' }}>
+                        Premium project details like Floor Plans, Possession Date, and Master USP are reserved. Request more details to unlock.
+                      </p>
+                      
+                      <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <FileText size={24} color="#334155" />
+                          </div>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Floor Plans</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Calendar size={24} color="#334155" />
+                          </div>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Possession Date</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '56px', height: '56px', borderRadius: '50%', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Star size={24} color="#334155" />
+                          </div>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Master USP</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ width: '1px', backgroundColor: '#e2e8f0', display: 'none' }} className="md-divider"></div>
+
+                    <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <a
+                        href="tel:8886087778"
+                        style={{ width: '100%', maxWidth: '320px', padding: '16px 20px', fontSize: '1.05rem', fontWeight: 600, textDecoration: 'none', backgroundColor: '#3b82f6', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '12px', color: '#fff', marginBottom: '16px', boxShadow: '0 4px 12px rgba(59,130,246,0.3)', transition: 'all 0.2s' }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <Phone size={20} />
+                          <span>Call for Details</span>
+                        </div>
+                        <ArrowRight size={20} />
                       </a>
-                    ) : '-'}
+                      
+                      <a
+                        href="https://wa.me/918886087778"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ width: '100%', maxWidth: '320px', padding: '16px 20px', fontSize: '1.05rem', fontWeight: 600, textDecoration: 'none', backgroundColor: '#22c55e', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '12px', marginBottom: '24px', boxShadow: '0 4px 12px rgba(34,197,94,0.3)', transition: 'all 0.2s' }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <MessageCircle size={20} />
+                          <span>WhatsApp Us</span>
+                        </div>
+                        <ArrowRight size={20} />
+                      </a>
+
+                      <div style={{ width: '40px', height: '1px', backgroundColor: '#e2e8f0', marginBottom: '16px' }}></div>
+
+                      <span style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '12px' }}>Talk to our property experts</span>
+                      
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <img src="https://i.pravatar.cc/150?img=11" alt="Expert 1" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                        <img src="https://i.pravatar.cc/150?img=5" alt="Expert 2" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                        <img src="https://i.pravatar.cc/150?img=12" alt="Expert 3" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Lead Registration</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px', wordBreak: 'break-all' }}>
-                    {property.lead_regist || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>CP Code</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.cp_code || '-'}
-                  </div>
-                </div>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Status</span>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, color: '#110e2e', marginTop: '4px' }}>
-                    {property.status || '-'}
-                  </div>
-                </div>
+                )}
               </div>
             </div>
-            
+
             {/* Location Map URL Iframe if available */}
             {property.locationMapUrl && property.locationMapUrl.includes('google.com/maps') && (
               <div
@@ -337,7 +425,7 @@ export default function PropertyDetails() {
                   marginBottom: '32px'
                 }}
               >
-                 <span className="badge-category" style={{ display: 'block', marginBottom: '6px' }}>
+                <span className="badge-category" style={{ display: 'block', marginBottom: '6px' }}>
                   LOCATION MAP
                 </span>
                 <iframe
@@ -357,7 +445,7 @@ export default function PropertyDetails() {
           {/* Right Sticky Booking Desk (4 cols) */}
           <div style={{ gridColumn: 'span 12' }} className="details-sidebar-col">
             <div style={{ position: 'sticky', top: '96px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
+
               {/* Schedule Site Visit CTA Box */}
               <div
                 style={{
@@ -372,11 +460,11 @@ export default function PropertyDetails() {
                   <Sparkles size={13} color="#f15a24" />
                   <span>VIP SITE ASSISTANCE</span>
                 </div>
-                
+
                 <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
                   Visit {property.name}
                 </h3>
-                
+
                 <p style={{ color: '#cbd5e1', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '20px' }}>
                   Experience actual model apartment views, inspect construction materials, and discuss tailored payment plans.
                 </p>
