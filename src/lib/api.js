@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.PROD ? 'https://aira-infra-backend.vercel.app/api' : 'http://localhost:8000/api';
+const API_BASE = 'https://aira-infra-backend.vercel.app/api';
 
 const getToken = () => localStorage.getItem('aira_access_token');
 

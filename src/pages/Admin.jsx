@@ -217,20 +217,20 @@ export default function Admin() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const formData = new FormData();
     formData.append('file', file);
-    
+
     try {
       const token = localStorage.getItem('aira_access_token');
-      const response = await fetch('http://localhost:8000/api/properties/upload-excel', {
+      const response = await fetch('https://aira-infra-backend.vercel.app/api/properties/upload-excel', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
         },
         body: formData
       });
-      
+
       const result = await response.json();
       if (response.ok) {
         showToast(result.message || 'Successfully imported properties from Excel!', 'success');
@@ -349,7 +349,7 @@ export default function Admin() {
   return (
     <div style={{ paddingTop: '36px', paddingBottom: '80px', backgroundColor: '#fbfbfa', minHeight: '90vh' }}>
       <div className="container">
-        
+
         {/* Top Management Header */}
         <div
           style={{
@@ -581,10 +581,10 @@ export default function Admin() {
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <input 
-                  type="file" 
-                  accept=".xlsx, .xls, .csv" 
-                  style={{ display: 'none' }} 
+                <input
+                  type="file"
+                  accept=".xlsx, .xls, .csv"
+                  style={{ display: 'none' }}
                   ref={fileInputRef}
                   onChange={handleFileUpload}
                 />
@@ -631,7 +631,7 @@ export default function Admin() {
                           const match = gUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || gUrl.match(/id=([a-zA-Z0-9_-]+)/) || gUrl.match(/\/folders\/([a-zA-Z0-9_-]+)/);
                           if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
                         }
-                        
+
                         const placeholders = [
                           'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
                           'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
@@ -758,7 +758,7 @@ export default function Admin() {
         {/* ================================================================== */}
         {activeTab === 'users' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '28px' }}>
-            
+
             {/* Create New User Card */}
             <div style={{ backgroundColor: '#ffffff', borderRadius: '20px', border: '1px solid #edf0f3', padding: '28px', boxShadow: '0 4px 14px rgba(0,0,0,0.03)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
@@ -1178,7 +1178,7 @@ export default function Admin() {
 
             {/* Modal Form */}
             <form onSubmit={handleSaveProject} style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              
+
               {/* Row 1: Name & Tagline */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
                 <div>
