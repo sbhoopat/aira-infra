@@ -99,6 +99,10 @@ CREATE TABLE IF NOT EXISTS public.properties (
   floor_plans JSONB DEFAULT '[]'::jsonb,
   specifications JSONB DEFAULT '{}'::jsonb,
   nearby_landmarks JSONB DEFAULT '[]'::jsonb,
+  google_drive_url TEXT,
+  lead_regist TEXT,
+  cp_code TEXT,
+  location_map_url TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
