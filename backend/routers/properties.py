@@ -34,8 +34,11 @@ async def upload_excel(file: UploadFile = File(...), admin: UserResponse = Depen
     if not file.filename.endswith('.xlsx'):
         raise HTTPException(status_code=400, detail="Only .xlsx files are supported")
     
-    # Save the file temporarily
-    temp_file = f"temp_{file.filename}"
+    import tempfile
+    
+    # Save the file temporarily in the system's temp directory (required for Vercel)
+    temp_dir = tempfile.gettempdir()
+    temp_file = os.path.join(temp_dir, f"temp_{file.filename}")
     try:
         with open(temp_file, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
