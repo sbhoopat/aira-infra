@@ -29,7 +29,7 @@ def send_enquiry_email(enquiry_data: dict):
         logger.error("RESEND_API_KEY is missing from environment variables.")
         return
     
-    resend.api_key = 're_DBMm9L2s_9RkyE921coyfXmWSF9Sms7oB'
+    resend.api_key = ''
 
     try:
         email = resend.Emails.send(payload)
